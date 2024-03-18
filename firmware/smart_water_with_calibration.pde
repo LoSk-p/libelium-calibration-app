@@ -127,7 +127,7 @@ void setup()
   auxFVMajor = Utils.readEEPROM(addressFVMajor);
   auxFVMinor = Utils.readEEPROM(addressFVMajor);
 
-  delay(5000);
+  delay(500);
 
   if (debug == 1) {
     USB.println(cal_point_10);
@@ -749,7 +749,7 @@ void SesorData() {
   USB.println(F("$measure"));
   Water.ON();
   Turbidity.ON();
-  delay(2000);
+  delay(500);
 
     ///////////////////////////////////////////
     // 2. Read sensors

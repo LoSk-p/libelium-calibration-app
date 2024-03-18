@@ -9,6 +9,7 @@ from sensors_const import MULTIIONS_SOLUTIONS, SW_BOARD_TYPE, SWIONS_BOARD_TYPE
 from workers import BoardSerial, PortDetectThread
 from logger import get_logger
 from gui.mainwindow import Ui_MainWindow
+from loading_window import LoadingWindowManager
 
 
 _LOGGER = get_logger(__name__)
@@ -34,6 +35,7 @@ class Calibration:
         self.button.setEnabled(False)
 
     def _start_calibration(self):
+        self.main_window.loading_window_manager.show_calibration_window()
         sensor_name = self.main_window.boxSensors.currentText()
         solution = self.main_window.boxCalibrationSolution.currentText()
         self._setup_graphics()
@@ -48,6 +50,7 @@ class Calibration:
         self.values = []
 
     def _progress_update(self, data):
+        self.main_window.loading_window_manager.close_window()
         _LOGGER.debug(f"Progress update: {data['step']}")
         self.progress_bar.setValue(data["step"] + 1)
         self._draw_graphics(data)
@@ -72,6 +75,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None, app=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
+        self.w = None
+        self.loading_window_manager = LoadingWindowManager(self)
         self.board_serial = None
         self.board_status = BoardStatus.Disconnected
         self.current_board_type: str = SW_BOARD_TYPE
@@ -248,6 +253,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def _update_board_status(self, board_status: str):
         self.board_status = board_status
         self.dataStatus.setText(board_status)
+        if self.board_status == BoardStatus.Connection:
+            self.loading_window_manager.show_usb_window()
+            # self.w = AnotherWindow(self)
+            # self.w.show()
+        else:
+            self.loading_window_manager.close_window()
+            # if self.w is not None:
+            #     self.w.close()
+            # self.w = None
 
     def populate_boards(self, ports: tp.List[str]):
         self.boxUSBPorts.clear()
@@ -285,6 +299,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             self.radioButtonSW.setEnabled(True)
             self.radioButtonSWIons.setEnabled(True)
+    
+    def moveEvent(self, event):
+        self.loading_window_manager.follow_parent()
+
+    def mousePressEvent(self, event):
+        self.loading_window_manager.raise_on_top()
 
 
 app = QtWidgets.QApplication(sys.argv)
