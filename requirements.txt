@@ -1,0 +1,5 @@
+pyserial==3.4
+PyQt5-sip==12.12.1
+PyQt5==5.15.9
+pyqtgraph==0.13.3
+pyinstaller==6.5.0
