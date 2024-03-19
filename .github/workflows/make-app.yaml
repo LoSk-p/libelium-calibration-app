@@ -18,7 +18,7 @@ jobs:
     - name: build with pyinstaller
       run: |
         cd app
-        pyinstaller main.py --onefile --windowed --name SmartWaterGUI.dmg
+        pyinstaller --paths=gui main.py --onefile --windowed --name SmartWaterGUI.dmg
         ls
         ls dist
     - uses: actions/upload-artifact@v2
@@ -44,7 +44,7 @@ jobs:
     - name: build with pyinstaller
       run: |
         cd app
-        pyinstaller main.py --onefile --windowed --name SmartWaterGUI
+        pyinstaller --paths=gui main.py --onefile --windowed --name SmartWaterGUI
     - uses: actions/upload-artifact@v2
       with:
         name: SmartWaterGUI-ubuntu20
@@ -68,7 +68,7 @@ jobs:
     - name: build with pyinstaller
       run: |
         cd app
-        pyinstaller main.py --onefile --windowed --name SmartWaterGUI
+        pyinstaller --paths=gui main.py --onefile --windowed --name SmartWaterGUI
     - uses: actions/upload-artifact@v2
       with:
         name: SmartWaterGUI-ubuntu-latest
@@ -87,7 +87,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           cd app
-          pyinstaller main.py --onefile --windowed --name SmartWaterGUI.exe
+          pyinstaller --paths=gui main.py --onefile --windowed --name SmartWaterGUI.exe
           ls dist/
       - uses: actions/upload-artifact@v2
         with:
@@ -107,7 +107,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           cd app
-          pyinstaller main.py --onefile --windowed --name SmartWaterGUI.exe
+          pyinstaller --paths=gui main.py --onefile --windowed --name SmartWaterGUI.exe
           ls dist/
       - uses: actions/upload-artifact@v2
         with:
