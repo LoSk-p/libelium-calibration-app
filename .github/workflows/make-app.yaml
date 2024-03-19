@@ -18,6 +18,7 @@ jobs:
     - name: build with pyinstaller
       run: |
         cd app
+        pyuic5 gui/mainwindow.ui -o gui/mainwindow.py
         pyinstaller --paths=gui main.py --onefile --windowed --name SmartWaterGUI.dmg
         ls
         ls dist
@@ -44,6 +45,7 @@ jobs:
     - name: build with pyinstaller
       run: |
         cd app
+        pyuic5 gui/mainwindow.ui -o gui/mainwindow.py
         pyinstaller --paths=gui main.py --onefile --windowed --name SmartWaterGUI
     - uses: actions/upload-artifact@v2
       with:
@@ -68,6 +70,7 @@ jobs:
     - name: build with pyinstaller
       run: |
         cd app
+        pyuic5 gui/mainwindow.ui -o gui/mainwindow.py
         pyinstaller --paths=gui main.py --onefile --windowed --name SmartWaterGUI
     - uses: actions/upload-artifact@v2
       with:
@@ -87,6 +90,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           cd app
+          pyuic5 gui/mainwindow.ui -o gui/mainwindow.py
           pyinstaller --paths=gui main.py --onefile --windowed --name SmartWaterGUI.exe
           ls dist/
       - uses: actions/upload-artifact@v2
@@ -107,6 +111,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           cd app
+          pyuic5 gui/mainwindow.ui -o gui/mainwindow.py
           pyinstaller --paths=gui main.py --onefile --windowed --name SmartWaterGUI.exe
           ls dist/
       - uses: actions/upload-artifact@v2
