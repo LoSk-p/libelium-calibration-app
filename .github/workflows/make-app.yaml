@@ -17,6 +17,7 @@ jobs:
         pip install -r requirements.txt
     - name: build with pyinstaller
       run: |
+        cd app
         pyinstaller app/main.py --onefile --windowed --name SmartWaterGUI.dmg
         ls
         ls dist
@@ -42,6 +43,7 @@ jobs:
         pip install -r requirements.txt
     - name: build with pyinstaller
       run: |
+        cd app
         pyinstaller app/main.py --onefile --windowed --name SmartWaterGUI
     - uses: actions/upload-artifact@v2
       with:
@@ -65,6 +67,7 @@ jobs:
         pip install -r requirements.txt
     - name: build with pyinstaller
       run: |
+        cd app
         pyinstaller app/main.py --onefile --windowed --name SmartWaterGUI
     - uses: actions/upload-artifact@v2
       with:
@@ -83,6 +86,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          cd app
           pyinstaller app/main.py --onefile --windowed --name SmartWaterGUI.exe
           ls dist/
       - uses: actions/upload-artifact@v2
@@ -102,6 +106,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          cd app
           pyinstaller app/main.py --onefile --windowed --name SmartWaterGUI.exe
           ls dist/
       - uses: actions/upload-artifact@v2
