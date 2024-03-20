@@ -22,11 +22,17 @@ class PortDetectThread(QtCore.QThread):
         ports = None
         while True:
             new_ports = serial.tools.list_ports.comports()
-            if ports is None or [p.name for p in ports] != [p.name for p in new_ports]:
-                self.portsUpdate.emit(new_ports)
+            if ports is None or [p.description for p in ports] != [p.description for p in new_ports]:
+                _LOGGER.debug(f"New ports: {[p.description for p in new_ports]}")
+                new_ports_sorted = []
+                for port in new_ports:
+                    if "USB" in port.description or "Serial" in port.description:
+                        new_ports_sorted.insert(0, port)
+                    else:
+                        new_ports_sorted.append(port)
+                self.portsUpdate.emit(new_ports_sorted)
             time.sleep(self.interval)
             ports = new_ports
-
 
 
 class BoardSerial(QtCore.QThread):
@@ -38,16 +44,26 @@ class BoardSerial(QtCore.QThread):
     calibrationProgressUpdate = QtCore.pyqtSignal(dict)
     currentBoardUpdate = QtCore.pyqtSignal(str)
     boardStatusUpdate = QtCore.pyqtSignal(str)     
-    restartSignal = QtCore.pyqtSignal()        
+    restartSignal = QtCore.pyqtSignal()
 
-    def __init__(self, port: str, boards: tp.Dict[str, Board], parent=None):
+    @classmethod
+    def create_from_port(cls, port: str, boards: tp.Dict[str, Board]):
+        _LOGGER.debug(f"New port: {port}")
+        if "tty" in port:
+            port_name: str = f"/dev/{port}"
+        else:
+            port_name: str = port
+        try:
+            serial_worker = serial.Serial(port_name, BAUDRATE)
+        except serial.serialutil.SerialException:
+            _LOGGER.debug(f"Can't connect to the {port_name} port")
+            return None
+        return BoardSerial(serial_worker, boards)
+
+    def __init__(self, serial_worker: serial.Serial, boards: tp.Dict[str, Board], parent=None):
         super(QtCore.QThread, self).__init__(parent)
         self._port_is_opened = True
-        if "tty" in port:
-            self.port: str = f"/dev/{port}"
-        else:
-            self.port: str = port
-        self.serial: serial.Serial = serial.Serial(self.port, BAUDRATE)
+        self.serial: serial.Serial = serial_worker
         self.current_board = None
         self._commands_queue = []
         self._allowed_send_command = False
@@ -92,8 +108,9 @@ class BoardSerial(QtCore.QThread):
         if self._port_is_opened:
             self.serial.close()
             self.boardStatusUpdate.emit(BoardStatus.Disconnected)
-            _LOGGER.info(f"Port {self.port} is closed")
+            _LOGGER.info(f"Port {self.serial.port} is closed")
             self._port_is_opened = False
+            self.quit()
 
     def run(self):
         while True:
