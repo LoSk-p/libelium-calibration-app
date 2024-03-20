@@ -6,6 +6,7 @@ import pyqtgraph as pg
 
 from boards import SWBoard, SWIonsBoard, BoardStatus
 from sensors_const import MULTIIONS_SOLUTIONS, SW_BOARD_TYPE, SWIONS_BOARD_TYPE
+from serial.tools.list_ports_common import ListPortInfo
 from workers import BoardSerial, PortDetectThread
 from logger import get_logger
 from gui.mainwindow import Ui_MainWindow
@@ -13,7 +14,6 @@ from loading_window import LoadingWindowManager
 
 
 _LOGGER = get_logger(__name__)
-
 
 class Calibration:
     def __init__(self, main_window: QtWidgets.QMainWindow):
@@ -75,7 +75,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None, app=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
-        self.w = None
+        self.detected_ports = []
         self.loading_window_manager = LoadingWindowManager(self)
         self.board_serial = None
         self.board_status = BoardStatus.Disconnected
@@ -263,12 +263,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #     self.w.close()
             # self.w = None
 
-    def populate_boards(self, ports: tp.List[str]):
+    def populate_boards(self, ports: tp.List[ListPortInfo]):
+        self.detected_ports = ports
         self.boxUSBPorts.clear()
         if self.boxUSBPorts.currentText() == "" and len(ports) > 0:
             self.boxUSBPorts.setCurrentIndex(0)
         if len(ports) > 0:
-            self.boxUSBPorts.addItems([p.name for p in ports])
+            self.boxUSBPorts.addItems([p.description for p in ports])
         else:
             sep = QtGui.QStandardItem("Платы не найдены")
             sep.setEnabled(False)
@@ -283,22 +284,36 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.radioButtonSW.setEnabled(False)
         self.radioButtonSWIons.setEnabled(False)
 
-    def choose_port(self, port):
-        _LOGGER.debug(f"New port chosen: {port}")
-        if port != "Платы не найдены" and port != "":
+    def choose_port(self, port_description: str):
+        _LOGGER.debug(f"New port chosen: {port_description}")
+        if port_description != "Платы не найдены" and port_description != "":
+            port = self._get_port_for_description(port_description)
             if self.board_serial is not None:
                 self.board_serial.close_connection()
-            self.board_serial = BoardSerial(port, self.boards)
-            self.board_serial.dataUpdate.connect(self._update_sensors_meas)
-            self.board_serial.batteryUpdate.connect(self._update_battery)
-            self.board_serial.infoUpdate.connect(self._update_board_info)
-            self.board_serial.currentBoardUpdate.connect(self.chose_curent_board)
-            self.board_serial.coeffsUpdate.connect(self._update_calibration_coeffs)
-            self.board_serial.boardStatusUpdate.connect(self._update_board_status)
-            self.board_serial.start()
+            self.board_serial = BoardSerial.create_from_port(port, self.boards)
+            if self.board_serial is not None:
+                self.board_serial.dataUpdate.connect(self._update_sensors_meas)
+                self.board_serial.batteryUpdate.connect(self._update_battery)
+                self.board_serial.infoUpdate.connect(self._update_board_info)
+                self.board_serial.currentBoardUpdate.connect(self.chose_curent_board)
+                self.board_serial.coeffsUpdate.connect(self._update_calibration_coeffs)
+                self.board_serial.boardStatusUpdate.connect(self._update_board_status)
+                self.board_serial.start()
+            else:
+                self.statusBar().showMessage(f"Can't connect to the port {port}", 2000)
+                self.radioButtonSW.setEnabled(True)
+                self.radioButtonSWIons.setEnabled(True)
         else:
             self.radioButtonSW.setEnabled(True)
             self.radioButtonSWIons.setEnabled(True)
+
+    def _get_port_for_description(self, port_description: str) -> str:
+        for port in self.detected_ports:
+            if port.description == port_description:
+                if port.name is not None:
+                    return port.name
+                else:
+                    return port.device
     
     def moveEvent(self, event):
         self.loading_window_manager.follow_parent()
