@@ -9,8 +9,10 @@ from sensors_const import MULTIIONS_SOLUTIONS, SW_BOARD_TYPE, SWIONS_BOARD_TYPE
 from serial.tools.list_ports_common import ListPortInfo
 from workers import BoardSerial, PortDetectThread
 from logger import get_logger
+
 from gui.mainwindow import Ui_MainWindow
 from loading_window import LoadingWindowManager
+from gui.label_color_utils import set_green_label_color, set_red_label_color, set_yellow_label_color
 
 
 _LOGGER = get_logger(__name__)
@@ -79,6 +81,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.loading_window_manager = LoadingWindowManager(self)
         self.board_serial = None
         self.board_status = BoardStatus.Disconnected
+        self._update_board_status(self.board_status)
         self.current_board_type: str = SW_BOARD_TYPE
         self.boards = {SW_BOARD_TYPE: SWBoard(), SWIONS_BOARD_TYPE: SWIonsBoard()}
         self.current_board: str = self.boards[SW_BOARD_TYPE]
@@ -137,6 +140,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.sensors_enabled: tp.List[str] = []
         self.populate_sensors_on_calibration()
         self._setup_graphic()
+        self._handle_disabled_sensors()
         self.show()
 
     def _setup_graphic(self):
@@ -148,13 +152,35 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.calibration = Calibration(self)
 
     def sensors_sockets_changed(self, data):
+        self._set_not_equal_sensors_on_sockets()
         self._update_connected_sockets()
+        if self.board_status == BoardStatus.Connected:
+            self._update_calibration_coeffs()
+
+    def _set_not_equal_sensors_on_sockets(self):
+        socket_number = 1
+        changed_new_sensor_name = None
+        changed_old_sensor_name = None
+        changed_socket = None
+        for sensor in self.sensors_gui:
+            if sensor[0].currentText() != self.current_board.get_current_sensor_for_socket(socket_number):
+                changed_new_sensor_name = sensor[0].currentText()
+                changed_old_sensor_name = self.current_board.get_current_sensor_for_socket(socket_number)
+                changed_socket = socket_number
+            socket_number += 1
+        if changed_new_sensor_name is not None and changed_old_sensor_name is not None:
+            socket_number = 1
+            for sensor in self.sensors_gui:
+                if sensor[0].currentText() == changed_new_sensor_name and socket_number != changed_socket:
+                    sensor[0].setCurrentText(changed_old_sensor_name)
+                socket_number += 1
 
     def _update_connected_sockets(self):
         i = 1
         connected_sockets = {}
         for sensor in self.sensors_gui:
-            connected_sockets[sensor[0].currentText()] = i
+            # connected_sockets[sensor[0].currentText()] = i
+            connected_sockets[i] = sensor[0].currentText()
             i += 1
         self.current_board.update_connected_sockets(connected_sockets)
 
@@ -167,8 +193,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.boxSensors.addItems(self.sensors_enabled)
         if self.board_status == BoardStatus.Connected:
             self._update_sensors_meas()
-        if self.radioButtonSWIons.isChecked():
-            self.boxSensors.addItem("Multi Ions (NO3, NH4, Cl)")
+        # if self.radioButtonSWIons.isChecked():
+        #     self.boxSensors.addItem("Multi Ions (NO3, NH4, Cl)")
 
     def choose_sensor_calibration(self, sensor: str):
         self.current_sensor_calibration = sensor
@@ -190,6 +216,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             SW_BOARD_TYPE if self.radioButtonSW.isChecked() else SWIONS_BOARD_TYPE
         )
         self.populate_sensors_on_calibration()
+        self._update_connected_sockets()
 
     def set_sensors_units(self):
         for sensor in self.sensors_gui:
@@ -216,6 +243,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def sensor_enabled_changed(self, state: int):
         _LOGGER.debug(f"Checkbox state changed: {state}")
         self.populate_sensors_on_calibration()
+        self._handle_disabled_sensors()
+
+    def _handle_disabled_sensors(self):
+        for sensor in self.sensors_gui:
+            self._set_enabled_sensor(sensor, sensor[1].checkState())
+    
+    def _set_enabled_sensor(self, sensor: list, enable: bool):
+        sensor[0].setEnabled(enable)
+        sensor[2].setEnabled(enable)
 
     def _update_sensors_meas(self) -> None:
         sensors_data = self.current_board.get_sensors_data()
@@ -254,14 +290,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.board_status = board_status
         self.dataStatus.setText(board_status)
         if self.board_status == BoardStatus.Connection:
+            set_yellow_label_color(self.dataStatus)
             self.loading_window_manager.show_usb_window()
-            # self.w = AnotherWindow(self)
-            # self.w.show()
         else:
+            if self.board_status == BoardStatus.Connected:
+                set_green_label_color(self.dataStatus)
+            else:
+                set_red_label_color(self.dataStatus)
             self.loading_window_manager.close_window()
-            # if self.w is not None:
-            #     self.w.close()
-            # self.w = None
+            self.pushButtonStartCalibration.setEnabled(True)
 
     def populate_boards(self, ports: tp.List[ListPortInfo]):
         self.detected_ports = ports

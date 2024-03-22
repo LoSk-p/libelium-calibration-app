@@ -31,7 +31,8 @@ class Board:
         self._sensor_objects = sensors
         self._board_data = BoardData()
         self._parser_strategy = None
-        self._connected_sockets: tp.Dict[str, int] = {}
+        # self._connected_sockets: tp.Dict[str, int] = {}
+        self._connected_sockets: tp.Dict[int, str] = {}
         self._sensors = {}
         self._sockets = {}
         for sensor in self._sensor_objects:
@@ -59,20 +60,38 @@ class Board:
         return self._parser_strategy.get_parser(data, self._message_id).parse(
             self._board_data
         )
+    
+    def get_current_sensor_for_socket(self, socket: int) -> tp.Optional[str]:
+        return self._connected_sockets.get(socket, None)
+        # for sensor_name in self._connected_sockets:
+        #     if self._connected_sockets[sensor_name] == socket:
+        #         return sensor_name
 
     def update_connected_sockets(self, connected_sockets: tp.Dict):
         self._connected_sockets = connected_sockets
+        _LOGGER.debug(f"Update connected sockets: {connected_sockets}")
 
     def get_sensors_data(self) -> tp.Dict:
         sensors_data = {}
-        for sensor_name in self._connected_sockets:
-            sensors_data[sensor_name] = self._board_data.sensors_data[
-                self._connected_sockets[sensor_name]
-            ]
+        for socket in self._connected_sockets:
+            sensors_data[self._connected_sockets[socket]] = self._board_data.sensors_data[socket]
         return sensors_data
+        # sensors_data = {}
+        # for sensor_name in self._connected_sockets:
+        #     sensors_data[sensor_name] = self._board_data.sensors_data[
+        #         self._connected_sockets[sensor_name]
+        #     ]
+        # return sensors_data
 
     def get_calibration_coeffs(self, sensor_name: str) -> tp.Dict:
-        return self._board_data.calibration_coeffs[self._connected_sockets[sensor_name]]
+        socket = self._get_socket_for_sensor_name(sensor_name)
+        return self._board_data.calibration_coeffs[socket]
+        # return self._board_data.calibration_coeffs[self._connected_sockets[sensor_name]]
+     
+    def _get_socket_for_sensor_name(self, sensor_name: str) -> int:
+        for socket in self._connected_sockets:
+            if self._connected_sockets[socket] == sensor_name:
+                return socket
 
     def get_board_info(self) -> tp.Dict:
         return self._board_data.board_info
@@ -174,8 +193,11 @@ class SWIonsBoard(Board):
         consentration, solution_number = self._sensors[sensor_name].get_consentration(
             calibration_solution
         )
+        # socket_command = self._socket_calibration_commands[
+        #     self._connected_sockets[sensor_name]
+        # ][solution_number]
         socket_command = self._socket_calibration_commands[
-            self._connected_sockets[sensor_name]
+            self._get_socket_for_sensor_name(sensor_name)
         ][solution_number]
         return f"{socket_command}{consentration}".encode(), "#?"
 

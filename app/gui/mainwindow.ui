@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>521</width>
+    <width>585</width>
     <height>631</height>
    </rect>
   </property>
@@ -22,7 +22,7 @@
      <rect>
       <x>10</x>
       <y>60</y>
-      <width>501</width>
+      <width>561</width>
       <height>521</height>
      </rect>
     </property>
@@ -36,10 +36,10 @@
      <widget class="QWidget" name="verticalLayoutWidget_3">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>50</y>
-        <width>421</width>
-        <height>403</height>
+        <x>30</x>
+        <y>40</y>
+        <width>471</width>
+        <height>431</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="layoutSensorsMeas" stretch="0,0,0,0,0,0">
@@ -88,7 +88,7 @@
             <widget class="QTextBrowser" name="dataMeasSensor_1">
              <property name="maximumSize">
               <size>
-               <width>130</width>
+               <width>150</width>
                <height>30</height>
               </size>
              </property>
@@ -147,7 +147,7 @@
             <widget class="QTextBrowser" name="dataMeasSensor_2">
              <property name="maximumSize">
               <size>
-               <width>130</width>
+               <width>150</width>
                <height>30</height>
               </size>
              </property>
@@ -200,7 +200,7 @@
             <widget class="QTextBrowser" name="dataMeasSensor_3">
              <property name="maximumSize">
               <size>
-               <width>130</width>
+               <width>150</width>
                <height>30</height>
               </size>
              </property>
@@ -253,7 +253,7 @@
             <widget class="QTextBrowser" name="dataMeasSensor_4">
              <property name="maximumSize">
               <size>
-               <width>130</width>
+               <width>150</width>
                <height>30</height>
               </size>
              </property>
@@ -306,7 +306,7 @@
             <widget class="QTextBrowser" name="dataMeasSensor_5">
              <property name="maximumSize">
               <size>
-               <width>130</width>
+               <width>150</width>
                <height>30</height>
               </size>
              </property>
@@ -359,7 +359,7 @@
             <widget class="QTextBrowser" name="dataMeasSensor_6">
              <property name="maximumSize">
               <size>
-               <width>130</width>
+               <width>150</width>
                <height>30</height>
               </size>
              </property>
@@ -387,7 +387,7 @@
      <widget class="QRadioButton" name="radioButtonSW">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>40</x>
         <y>10</y>
         <width>111</width>
         <height>31</height>
@@ -403,7 +403,7 @@
      <widget class="QRadioButton" name="radioButtonSWIons">
       <property name="geometry">
        <rect>
-        <x>140</x>
+        <x>170</x>
         <y>10</y>
         <width>141</width>
         <height>31</height>
@@ -421,9 +421,9 @@
      <widget class="QComboBox" name="boxSensors">
       <property name="geometry">
        <rect>
-        <x>270</x>
+        <x>320</x>
         <y>10</y>
-        <width>211</width>
+        <width>231</width>
         <height>31</height>
        </rect>
       </property>
@@ -457,9 +457,9 @@
      <widget class="QComboBox" name="boxCalibrationSolution">
       <property name="geometry">
        <rect>
-        <x>270</x>
+        <x>320</x>
         <y>50</y>
-        <width>211</width>
+        <width>231</width>
         <height>31</height>
        </rect>
       </property>
@@ -467,7 +467,7 @@
      <widget class="QPushButton" name="pushButtonStartCalibration">
       <property name="geometry">
        <rect>
-        <x>150</x>
+        <x>180</x>
         <y>140</y>
         <width>211</width>
         <height>41</height>
@@ -493,9 +493,9 @@
      <widget class="QComboBox" name="boxStabilisationTime">
       <property name="geometry">
        <rect>
-        <x>270</x>
+        <x>320</x>
         <y>90</y>
-        <width>211</width>
+        <width>231</width>
         <height>31</height>
        </rect>
       </property>
@@ -530,7 +530,7 @@
        <rect>
         <x>10</x>
         <y>440</y>
-        <width>471</width>
+        <width>541</width>
         <height>31</height>
        </rect>
       </property>
@@ -579,7 +579,7 @@
        <rect>
         <x>179</x>
         <y>209</y>
-        <width>301</width>
+        <width>371</width>
         <height>221</height>
        </rect>
       </property>
@@ -742,36 +742,13 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QLabel" name="labelUSBPort">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>81</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>USB Порт</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="boxUSBPorts">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>20</y>
-      <width>211</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="labelAppVersion">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>574</y>
-      <width>171</width>
-      <height>31</height>
+      <x>350</x>
+      <y>570</y>
+      <width>181</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
@@ -783,26 +760,88 @@
      <string>SmartWaterGUI версия ПО 2.0</string>
     </property>
    </widget>
-   <widget class="QLabel" name="labelBattery">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>20</y>
-      <width>51</width>
-      <height>31</height>
+      <x>10</x>
+      <y>10</y>
+      <width>561</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout" columnstretch="70,200,40,0,0,0">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
+     <item row="0" column="4">
+      <widget class="QLabel" name="dataStatus">
+       <property name="text">
+        <string>не подключено</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelUSBPort">
+       <property name="text">
+        <string>USB Порт</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="boxUSBPorts">
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="labelStatus">
+       <property name="text">
+        <string>Статус:</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="labelBatteryUnits">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>570</y>
+      <width>16</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>Заряд:</string>
+     <string>%</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="dataBattery">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>20</y>
+      <x>75</x>
+      <y>570</y>
       <width>31</width>
-      <height>31</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="layoutDirection">
@@ -815,46 +854,17 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="labelBatteryUnits">
+   <widget class="QLabel" name="labelBattery">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>20</y>
-      <width>21</width>
-      <height>31</height>
+      <x>19</x>
+      <y>570</y>
+      <width>47</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>%</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelStatus">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>580</y>
-      <width>61</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Статус:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="dataStatus">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>580</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>не подключено</string>
+     <string>Заряд:</string>
     </property>
    </widget>
   </widget>

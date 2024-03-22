@@ -12,11 +12,11 @@ class LoadingWindowManager:
         self.main_window = main_window
     
     def show_usb_window(self):
-        message = "Connecting to the board..."
+        message = "Подключаемся к плате..."
         self._show_window(message)
 
     def show_calibration_window(self):
-        message = "Wait for the board response..."
+        message = "Начинаем калибровку..."
         self._show_window(message)
 
     def _show_window(self, message: str):
@@ -45,7 +45,7 @@ class LoadingWindow(QWidget):
         self.parent_window = parent
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setStyleSheet("background-color: lightgrey;")
-        self.setFixedSize(200, 100)
+        self.setFixedSize(250, 100)
 
         layout = QVBoxLayout()
         self.setLayout(layout)
